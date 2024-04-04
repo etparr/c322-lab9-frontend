@@ -23,8 +23,9 @@
       <input type="file" id="imageInput" />
       <button onclick="addTheDuck()">Add the duck</button>
     </div>
+    <script src="configuration.js"></script>
     <script>
-      let host = "http://localhost:8080";
+      let host = getHost();
           async function addTheDuck() {
               let message = "";
                 let duckName = document.getElementById("name").value;
@@ -42,11 +43,19 @@
                 let request = {
                   method: "POST",
                   headers: {
-                      "Content-Type": "application/json"
+                      "Content-Type": "application/json",
+                      'Authorization': 'Bearer ${configuration.token()}'
                   },
                   body: JSON.stringify(duck)
                 };
-                let response = await fetch(host + "/ducks", request);
+                let response = await fetch(host + "/ducks", request)
+                .then((response) =>
+          {
+            if(reponse.status == 401) {
+              logout();
+            }
+            return response.json();
+          });
                 if(response.status == 200) {
                   let id = await response.json();
                   let result = await submitTheImage(id);
@@ -68,9 +77,17 @@
                 formData.append("file", imageInput.files[0]);
                 let request = {
                   method: "POST",
-                  body: formData
+                  body: formData,
+                  'Authorization': 'Bearer ${configuration.token()}'
                 };
-                let response = await fetch(host + "/ducks/" + duckId + "/image", request);
+                let response = await fetch(host + "/ducks/" + duckId + "/image", request)
+                .then((response) =>
+          {
+            if(reponse.status == 401) {
+              logout();
+            }
+            return response.json();
+          });
                 let result = await response.json();
                 return result;
 
