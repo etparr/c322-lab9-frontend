@@ -34,7 +34,7 @@
 
       async function getAll() {
         let host = getHost();
-        const headers = {'Authorization': 'Bearer ${configuration.token()}' }; 
+        const headers = { 'Authorization': 'Bearer ' + configuration.token() }; 
         let response = await fetch(host + "/ducks", {headers })
           .then((response) =>
           {
